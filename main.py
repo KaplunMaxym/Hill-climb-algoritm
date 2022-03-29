@@ -123,57 +123,38 @@ def get_random_solution_with_weights(matrix:[], home:int):
         total_weight = 0
         for key, city in cities.items():
             total_weight += city.distance
-        # Add weights
         weights = []
         for key, city in cities.items():
             weights.append(total_weight / city.distance)
-        # Add a city at random
         from_index = random.choices(list(cities.keys()), weights=weights)[0]
         route.append(from_index)
-    # Create a new state and update the distance
     state = State(route)
     state.update_distance(matrix, home)
-    # Return a state
     return state
-# Mutate a solution
 def mutate(matrix:[], home:int, state:State, mutation_rate:float=0.01):
     
-    # Create a copy of the state
     mutated_state = state.deepcopy()
-    # Loop all the states in a route
     for i in range(len(mutated_state.route)):
-        # Check if we should do a mutation
         if(random.random() < mutation_rate):
-            # Swap two cities
             j = int(random.random() * len(state.route))
             city_1 = mutated_state.route[i]
             city_2 = mutated_state.route[j]
             mutated_state.route[i] = city_2
             mutated_state.route[j] = city_1
-    # Update the distance
     mutated_state.update_distance(matrix, home)
-    # Return a mutated state
     return mutated_state
-# Hill climbing algorithm
 def hill_climbing(matrix:[], home:int, initial_state:State, max_iterations:int, mutation_rate:float=0.01):
-    # Keep track of the best state
     best_state = initial_state
-    # An iterator can be used to give the algorithm more time to find a solution
     iterator = 0
-    # Create an infinite loop
     while True:
-        # Mutate the best state
         neighbor = mutate(matrix, home, best_state, mutation_rate)
-        # Check if the distance is less than in the best state
         if(neighbor.distance >= best_state.distance):
             iterator += 1
             if (iterator > max_iterations):
                 break
         if(neighbor.distance < best_state.distance):
             best_state = neighbor
-    # Return the best state
     return best_state
-# The main entry point for this module
 def main():
 
 
@@ -202,14 +183,10 @@ def main():
 
 
 
-        # Cities to travel
     cities = ['Ternopil', 'Lviv', 'Kyiv', 'Odessa']
     city_indexes = [0,1,2,3]
-    # Index of start location
-    home = 0 # Chicago
-    # Max iterations
+    home = 0
     max_iterations = 4
-    # Distances in miles between cities, same indexes (i, j) as in the cities array
     matrix = [[0   , 135 , 600, 1000],
               [135 , 0   , 735, 1100],
               [600 , 735 , 0  , 400 ],
@@ -217,7 +194,6 @@ def main():
 
 
 
-    # Get the best route by distance
     state = get_best_solution_by_distance(matrix, home)
     print('-- Best solution by distance --')
     print(cities[home], end='')
@@ -226,7 +202,6 @@ def main():
     print(' -> ' + cities[home], end='')
     print('\n\nTotal distance: {0} miles'.format(state.distance))
     print()
-    # Get the best random route
     state = get_random_solution(matrix, home, city_indexes, 100)
     print('-- Best random solution --')
     print(cities[home], end='')
@@ -235,7 +210,6 @@ def main():
     print(' -> ' + cities[home], end='')
     print('\n\nTotal distance: {0} miles'.format(state.distance))
     print()
-    # Get a random solution with weights
     state = get_random_solution(matrix, home, city_indexes, 100, use_weights=True)
     print('-- Best random solution with weights --')
     print(cities[home], end='')
@@ -244,7 +218,6 @@ def main():
     print(' -> ' + cities[home], end='')
     print('\n\nTotal distance: {0} miles'.format(state.distance))
     print()
-    # Run hill climbing to find a better solution
     state = get_best_solution_by_distance(matrix, home)
     state = hill_climbing(matrix, home, state, 1000, 0.1)
     print('-- Hill climbing solution --')
@@ -254,5 +227,4 @@ def main():
     print(' -> ' + cities[home], end='')
     print('\n\nTotal distance: {0} miles'.format(state.distance))
     print()
-# Tell python to run main method
 if __name__ == "__main__": main()
