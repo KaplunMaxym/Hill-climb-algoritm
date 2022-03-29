@@ -1,125 +1,83 @@
-# Import libraries
 import random
 import copy
-# This class represent a state
 class State:
-    # Create a new state
     def __init__(self, route:[], distance:int=0):
         self.route = route
         self.distance = distance
-    # Compare states
     def __eq__(self, other):
         for i in range(len(self.route)):
             if(self.route[i] != other.route[i]):
                 return False
         return True
-    # Sort states
     def __lt__(self, other):
          return self.distance < other.distance
-    # Print a state
     def __repr__(self):
         return ('({0},{1})\n'.format(self.route, self.distance))
-    # Create a shallow copy
     def copy(self):
         return State(self.route, self.distance)
-    # Create a deep copy
     def deepcopy(self):
         return State(copy.deepcopy(self.route), copy.deepcopy(self.distance))
-    # Update distance
     def update_distance(self, matrix, home):
         
-        # Reset distance
         self.distance = 0
-        # Keep track of departing city
         from_index = home
-        # Loop all cities in the current route
         for i in range(len(self.route)):
             self.distance += matrix[from_index][self.route[i]]
             from_index = self.route[i]
-        # Add the distance back to home
         self.distance += matrix[from_index][home]
-# This class represent a city (used when we need to delete cities)
 class City:
-    # Create a new city
     def __init__(self, index:int, distance:int):
         self.index = index
         self.distance = distance
-    # Sort cities
     def __lt__(self, other):
          return self.distance < other.distance
-# Get the best random solution from a population
 def get_random_solution(matrix:[], home:int, city_indexes:[], size:int, use_weights=False):
-    # Create a list with city indexes
     cities = city_indexes.copy()
-    # Remove the home city
     cities.pop(home)
-    # Create a population
     population = []
     for i in range(size):
         if(use_weights == True):
             state = get_random_solution_with_weights(matrix, home)
         else:
-            # Shuffle cities at random
             random.shuffle(cities)
-            # Create a state
             state = State(cities[:])
             state.update_distance(matrix, home)
-        # Add an individual to the population
         population.append(state)
-    # Sort population
     population.sort()
-    # Return the best solution
     return population[0]
-# Get best solution by distance
 def get_best_solution_by_distance(matrix:[], home:int):
     
-    # Variables
     route = []
     from_index = home
     length = len(matrix) - 1
-    # Loop until route is complete
     while len(route) < length:
-         # Get a matrix row
         row = matrix[from_index]
-        # Create a list with cities
         cities = {}
         for i in range(len(row)):
             cities[i] = City(i, row[i])
-        # Remove cities that already is assigned to the route
         del cities[home]
         for i in route:
             del cities[i]
-        # Sort cities
         sorted = list(cities.values())
         sorted.sort()
-        # Add the city with the shortest distance
         from_index = sorted[0].index
         route.append(from_index)
-    # Create a new state and update the distance
     state = State(route)
     state.update_distance(matrix, home)
-    # Return a state
     return state
-# Get a random solution by using weights
 def get_random_solution_with_weights(matrix:[], home:int):
     
-    # Variables
     route = []
     from_index = home
     length = len(matrix) - 1
-    # Loop until route is complete
     while len(route) < length:
-         # Get a matrix row
         row = matrix[from_index]
-        # Create a list with cities
         cities = {}
         for i in range(len(row)):
             cities[i] = City(i, row[i])
-        # Remove cities that already is assigned to the route
         del cities[home]
         for i in route:
             del cities[i]
-        # Get the total weight
         total_weight = 0
         for key, city in cities.items():
             total_weight += city.distance
@@ -159,14 +117,10 @@ def main():
 
 
 
-    # # Cities to travel
     # cities = ['New York', 'Los Angeles', 'Chicago', 'Minneapolis', 'Denver', 'Dallas', 'Seattle', 'Boston', 'San Francisco', 'St. Louis', 'Houston', 'Phoenix', 'Salt Lake City']
     # city_indexes = [0,1,2,3,4,5,6,7,8,9,10,11,12]
-    # # Index of start location
     # home = 2 # Chicago
-    # # Max iterations
     # max_iterations = 1000
-    # # Distances in miles between cities, same indexes (i, j) as in the cities array
     # matrix = [[0, 2451, 713, 1018, 1631, 1374, 2408, 213, 2571, 875, 1420, 2145, 1972],
     #         [2451, 0, 1745, 1524, 831, 1240, 959, 2596, 403, 1589, 1374, 357, 579],
     #         [713, 1745, 0, 355, 920, 803, 1737, 851, 1858, 262, 940, 1453, 1260],
