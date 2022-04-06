@@ -137,15 +137,26 @@ def main():
 
 
 
-    cities = ['Ternopil', 'Lviv', 'Kyiv', 'Odessa']
-    city_indexes = [0,1,2,3]
-    home = 0
-    max_iterations = 4
-    matrix = [[0   , 135 , 600, 1000],
-              [135 , 0   , 735, 1100],
-              [600 , 735 , 0  , 400 ],
-              [1000, 1100, 400, 0   ]]
+    #   cities = ['Ternopil', 'Lviv', 'Kyiv', 'Odessa']
+    #   city_indexes = [0,1,2,3]
+    #   home = 0
+    #   max_iterations = 4
+    #   matrix = [[0   , 135 , 600, 1000],
+    #             [135 , 0   , 735, 1100],
+    #             [600 , 735 , 0  , 400 ],
+    #             [1000, 1100, 400, 0   ]]
 
+
+
+    cities = ['Lviv', 'Dubno', 'Ternopil', 'Kyiv', 'Odesa']
+    city_indexes = [0,1,2,3,4]
+    home = 0
+    max_iterations = 5
+    matrix = [[0   , 135 , 135 , 835 , 1300],
+              [135 , 0   , 50  , 640 , 1100],
+              [135 , 50  , 0   , 550 , 1050],
+              [835 , 640 , 550 , 0   , 600 ],
+              [1300, 1100, 1050, 600 , 0   ]]
 
 
     state = get_best_solution_by_distance(matrix, home)
@@ -165,13 +176,13 @@ def main():
     print('\n\nTotal distance: {0} miles'.format(state.distance))
     print()
     state = get_random_solution(matrix, home, city_indexes, 100, use_weights=True)
-    print('-- Best random solution with weights --')
-    print(cities[home], end='')
-    for i in range(0, len(state.route)):
-       print(' -> ' + cities[state.route[i]], end='')
-    print(' -> ' + cities[home], end='')
-    print('\n\nTotal distance: {0} miles'.format(state.distance))
-    print()
+    #print('-- Best random solution with weights --')
+    #print(cities[home], end='')
+    #for i in range(0, len(state.route)):
+    #   print(' -> ' + cities[state.route[i]], end='')
+    #print(' -> ' + cities[home], end='')
+    #print('\n\nTotal distance: {0} miles'.format(state.distance))
+    #print()
     state = get_best_solution_by_distance(matrix, home)
     state = hill_climbing(matrix, home, state, 1000, 0.1)
     print('-- Hill climbing solution --')
